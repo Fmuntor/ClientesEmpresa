@@ -1,6 +1,6 @@
 # ClientesEmpresa
 ## Profesor: Andrés Rubio del Río
-## Alumno: 
+## Alumno: Fernando Muñoz Torres
 
 Tu tarea va a consistir en gestionar los clientes de una empresa. La empresa quiere almacenar la fecha de nacimiento de los diferentes clientes, así como su nombre bien formateado, su DNI comprobando que es válido y su teléfono comprobando también que es válido y su correo, que por supuesto, también deberá ser válido. El programa permitirá insertar nuevos clientes, buscar clientes, borrar un cliente, mostrar todos los clientes y mostrar los clientes que hayan nacido en una fecha determinada.
 
