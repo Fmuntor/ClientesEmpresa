@@ -6,17 +6,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Cliente {
-    private String ER_CORREO;
-    private String ER_DNI;
-    private String ER_TELEFONO;
-    public String FORMATO_FECHA;
+    private final String ER_CORREO = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+    private final String ER_DNI = "^(\\d{8})([-]?)([A-Za-z])$";
+    private final String ER_TELEFONO = "^\\d{9}$";
+    public final String FORMATO_FECHA = "^\\d{2}/\\d{2}/\\d{4}$";
     private String nombre;
     private String DNI;
     private String correo;
     private String telefono;
     private Date fechaNacimiento;
 
-    private static String formateaNombre(String nombre) {
+    private String formateaNombre(String nombre) {
         // Eliminar caracteres en blanco al inicio y al final del nombre
         nombre = nombre.trim();
     
@@ -35,14 +35,12 @@ public class Cliente {
         return nombre;
     }
 
-    private static boolean comprobarLetraDNI(String DNI){
-        // Definir la expresión regular. El primer grupo indica 8 numeros consecutivos, el segundo indica un posible guión, y el tercer grupo las letras mayusculas o minusculas de la A a la Z.
-        String patronDni = "^(\\d{8})([-]?)([A-Za-z])$";
+    private boolean comprobarLetraDNI(String DNI){
         // Definir las posibles letras posibles
         String mapaLetraDni = "TRWAGMYFPDXBNJZSQVHLCKE";
 
         // Comprobar si la cadena de entrada coincide con la expresión regular
-        if (!DNI.matches(patronDni)) {
+        if (!DNI.matches(ER_DNI)) {
             return false;
         }
 
@@ -116,10 +114,9 @@ public class Cliente {
         // El cuarto grupo (\\.) coincide con un punto.
         // El quinto grupo ([a-zA-Z]{2,6}) coincide con dos a seis letras.
         // El carácter $ al final de la expresión regular indica que la cadena debe terminar aquí.
-        String patronCorreo = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-        
+
         // Comprueba si el correo no coincide con la expresión regular,, en ese caso lanza una excepcion
-        if (!correo.matches(patronCorreo)) {
+        if (!correo.matches(ER_CORREO)) {
            throw new IllegalArgumentException("El formato del correo es incorrecto");
         }
 
@@ -127,11 +124,8 @@ public class Cliente {
    }
 
     public void setTelefono(String telefono) {
-        // Define la expresión regular para comprobar el formato del teléfono. Los simbolos ^ y $ definen que debe ser una cadena numerica de exclusivamente 9 digitos.
-        String patronTelefono = "^\\d{9}$";
-
         // Comprueba si el teléfono no coincide con la expresión regular, lanzando una nueva excepcion.
-        if (!telefono.matches(patronTelefono)) {
+        if (!telefono.matches(ER_TELEFONO)) {
             throw new IllegalArgumentException("El formato del teléfono es incorrecto");
         }
 
@@ -139,15 +133,12 @@ public class Cliente {
     }
 
     public void setFechaNacimiento(Date fechaNacimiento) {
-        // Define la expresión regular para comprobar el formato de la fecha
-        String patronFecha = "^\\d{2}/\\d{2}/\\d{4}$";
-
         // Formatea la fecha proporcionada en una cadena de texto
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String fechaFormateada = sdf.format(fechaNacimiento);
 
         // Comprueba si la fecha formateada coincide con la expresión regular
-        Pattern p = Pattern.compile(patronFecha);
+        Pattern p = Pattern.compile(FORMATO_FECHA);
         Matcher m = p.matcher(fechaFormateada);
 
         if (m.matches()) {
