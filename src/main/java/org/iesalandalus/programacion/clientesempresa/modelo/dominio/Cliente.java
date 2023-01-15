@@ -35,7 +35,7 @@ public class Cliente {
         return nombre;
     }
 
-    private boolean comprobarLetraDNI(String DNI){
+    public boolean comprobarLetraDNI(String DNI){
         // Definir las posibles letras posibles
         String mapaLetraDni = "TRWAGMYFPDXBNJZSQVHLCKE";
 

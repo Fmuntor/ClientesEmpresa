@@ -4,7 +4,7 @@ import org.iesalandalus.programacion.clientesempresa.modelo.dominio.Cliente;
 public class Clientes {
     private int capacidad;
     private int tamano;
-    private Cliente[] coleccionClientes;
+    public Cliente[] coleccionClientes;
 
     public Clientes (int capacidad){
         this.capacidad = capacidad;
@@ -15,11 +15,12 @@ public class Clientes {
     public int getCapacidad() {
         return capacidad;
     }
+
     public int getTamano() {
         return tamano;
     }
 
-    public Cliente[] get() {        //////////////////////
+    public Cliente[] get() {        
         return coleccionClientes;
     }
 
@@ -38,7 +39,7 @@ public class Clientes {
         }
 
         // Asignar los clientes que no cabían en el array anterior al nuevo
-        coleccionClientes = cliente;    ///////////////////////////////////////////
+        coleccionClientes = cliente;    
 
         // Actualizar la capacidad ya que el nuevo array la ha actualizado
         capacidad = indice;
@@ -98,7 +99,6 @@ public class Clientes {
         desplazarUnaPosicionHaciaLaIzquierda(eliminado);
     }
 
-    
     public void buscar(Cliente cliente) {
         // Buscar en el array el cliente introducido
         for(int i=0;i<coleccionClientes.length;i++){
