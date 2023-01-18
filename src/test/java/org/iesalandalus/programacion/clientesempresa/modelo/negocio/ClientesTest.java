@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -24,7 +23,7 @@ public class ClientesTest {
 	private static final String ERROR_NO_MAS_CLIENTES = "ERROR: No se aceptan más clientes.";
 	private static final String ERROR_CLIENTE_EXISTE = "ERROR: Ya existe un cliente con ese dni.";
 	private static final String ERROR_CLIENTE_BORRAR_NO_EXISTE = "ERROR: No existe ningún cliente como el indicado.";
-	private static final String ERROR_DIA_NULO = "ERROR: No se pueden devolver las citas para un día nulo.";
+	//private static final String ERROR_DIA_NULO = "ERROR: No se pueden devolver las citas para un día nulo.";
 	private static final String OPERACION_NO_PERMITIDA = "Debería haber saltado una excepción indicando que dicha operación no está permitida.";
 	private static final String CLIENTE_NULO = "Debería haber saltado una excepción indicando que no se puede operar con una cliente nulo.";
 	private static final String MENSAJE_NO_CORRECTO = "El mensaje devuelto por la excepción no es correcto.";

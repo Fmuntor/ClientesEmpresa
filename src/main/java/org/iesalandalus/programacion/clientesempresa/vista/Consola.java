@@ -1,41 +1,36 @@
 package org.iesalandalus.programacion.clientesempresa.vista;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.Scanner;
 
 
 import org.iesalandalus.programacion.clientesempresa.modelo.dominio.Cliente;
 import org.iesalandalus.programacion.clientesempresa.modelo.negocio.Clientes;
+import org.iesalandalus.programacion.utilidades.Entrada;
 
 public class Consola {
-    static Scanner sc = new Scanner(System.in);
 
     private Consola(){
     }
 
     public static void mostrarMenu(){
 
-        System.out.println("********** - MENU - **********");
-        System.out.println("");
+        System.out.println("\n********** - MENU - **********\n");
         System.out.println("1: Insertar.");
         System.out.println("2: Buscar.");
         System.out.println("3: Borrar.");
         System.out.println("4: Mostrar todos los clientes.");
         System.out.println("5: Mostrar los clientes según su fecha de nacimiento.");
-        System.out.println("6: Salir.");
-        System.out.println("");
-        System.out.println("------------------------------");
+        System.out.println("6: Salir.\n");
+        System.out.println("------------------------------\n");
     }
 
     public static Opcion elegirOpcion(){
-        System.out.println("ELIGE UNA OPCION:");
+        System.out.print("ELIGE UNA OPCION: ");
 
-        int opcion=sc.nextInt();
+        int opcion=Entrada.entero();
         switch (opcion) {
             case 1:
                 return Opcion.INSERTAR_CLIENTE;
@@ -50,78 +45,104 @@ public class Consola {
             case 6:
                 return Opcion.SALIR;
             default:
-            System.out.println("Opción inválida. Intente de nuevo.");
-            return elegirOpcion();
+                System.out.println("Opción inválida. Intente de nuevo.");
+                return Opcion.NO_VALIDO;
         }
     }
 
     public static Cliente leerCliente(){
-        
-        System.out.print("Introduce el nombre del cliente:");
-        String nombre = sc.nextLine();
-        System.out.print("Introduce el DNI del cliente:");
-        String DNI = sc.nextLine();
-        System.out.print("Introduce el correo del cliente:");
-        String correo = sc.nextLine();
-        System.out.print("Introduce el telefono del cliente:");
-        String telefono = sc.nextLine();
-        System.out.print("Introduce la fecha de nacimiento del cliente:");
-        String fechaintroducida = sc.nextLine();
-        // Pasar el dato introducido a formato Date
-        Date fecha=null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            fecha = formatter.parse(fechaintroducida);
-        } catch (ParseException e) {
-            System.out.println("Fecha incorrecta");
-        }
-        // Crear el constructor con los parametros introducidos
-        Cliente clienteLeido= new Cliente(nombre, DNI, correo, telefono, fecha);
+        Cliente cliente = new Cliente();
 
-        // Crear objeto clientes y array coleccion para buscar en los clientes creados
-        Clientes clientes = new Clientes(1);
-        // Buscar el cliente introducido
-        int indice=0;
-        boolean encontrado=false;
-        for(int i=0;i<clientes.coleccionClientes.length;i++){
-            if(clienteLeido.equals(clientes.coleccionClientes[i])){
-                indice=i;
-                encontrado=true;
+        String nombre = null;
+        while(nombre == null){
+            System.out.print("Introduce el nombre del cliente:");
+            nombre = Entrada.cadena();
+
+            try{
+                cliente.setNombre(nombre);
+            }catch(Exception e){
+                System.out.print(e.getMessage());
+                nombre = null;
             }
-            if (encontrado==false) {
-                throw new IllegalArgumentException("El cliente no se encuentra en la colección");
+        }
+
+        String DNI = null;
+        while(DNI == null){
+            System.out.print("Introduce el DNI del cliente:");
+            DNI = Entrada.cadena();
+
+            try{
+                cliente.setDNI(DNI);
+            }catch(Exception e){
+                System.out.print(e.getMessage());
+                DNI = null;
             }
-        }return clientes.coleccionClientes[indice];
+        }
+
+        String correo = null;
+        while(correo == null){
+            System.out.print("Introduce el correo del cliente:");
+            correo = Entrada.cadena();
+
+            try{
+                cliente.setCorreo(correo);
+            }catch(Exception e){
+                System.out.print(e.getMessage());
+                correo = null;
+            }
+        }
+
+        String telefono = null;
+        while(telefono == null){
+            System.out.print("Introduce el télefono del cliente:");
+            telefono = Entrada.cadena();
+
+            try{
+                cliente.setTelefono(telefono);
+            }catch(Exception e){
+                System.out.print(e.getMessage());
+                telefono = null;
+            }
+        }
+
+        cliente.setFechaNacimiento(Consola.leerFechaNacimiento());
+
+        return cliente;
     } 
 
-    public static Cliente leerClienteDNI(){
-        System.out.print("Introduce el DNI del cliente:");
-        String DNI = sc.nextLine();
-        int vueltas=0, encontrado=0;
-        Cliente clienteDNI = new Cliente(null, DNI, null, null, null);
-        // Comprobar que el DNI introducido es correcto
-        while(clienteDNI.comprobarLetraDNI(DNI)==false){
-            System.out.println("El DNI introducido es incorrecto.");
-            leerClienteDNI();
-        } 
+    public static Cliente leerClienteDNI(Clientes clientes){;
+        String DNI = null;
+        while(DNI == null){            
+            System.out.print("Introduce el DNI del cliente:");
+            DNI = Entrada.cadena();
+            if(DNI.trim().isEmpty()){
+                System.out.println("No se ha introducido un DNI.");
+                DNI = null;
+            }else{
+                Cliente clienteDNI = new Cliente();       
+                if(clienteDNI.comprobarLetraDNI(DNI)==false){
+                    System.out.println("El DNI introducido es incorrecto.");
+                    DNI = null;
+                } 
+            }
+        }
+
+        int encontrado=-1;       
         try{
-            Clientes clientes = new Clientes(1); 
-            Cliente[] coleccion = clientes.get();
-            for(int i=0;i<coleccion.length;i++){
+            for(int i=0;i<clientes.getTamano();i++){
                 // Si el DNI introducido es igual que el DNI de algun cliente existente, aumenta las vueltas y guarda el cliente.
-                if(clienteDNI.getDNI().equals(clientes.coleccionClientes[i].getDNI())){
-                encontrado=i;
-                vueltas++;
+                if(DNI.equals(clientes.coleccionClientes[i].getDni())){
+                    encontrado=i;
+                    break;
                 }
             }
-            // Si lo ha encontrado y no hay clientes con el mismo DNI, devuelve el cliente
-            if (vueltas == 1){
-                return clientes.coleccionClientes[encontrado];
-            }
-            if (vueltas == 0) {
+
+            if (encontrado == -1){
+                // Si no lo ha encontrado, lanzo excepcion
                 throw new Exception("Cliente no encontrado");
-            } else if (vueltas > 1) {
-                throw new Exception("Hay " + vueltas + " clientes con el mismo DNI.");
+            } else {
+                // Si lo ha encontrado y no hay clientes con el mismo DNI, devuelve el cliente
+                return clientes.coleccionClientes[encontrado];
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -130,20 +151,34 @@ public class Consola {
     }
 
     public static LocalDate leerFechaNacimiento() {
-        Scanner sc = new Scanner(System.in);
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        // Desactiva la funcion que suma días si la fecha es incorrecta, como el 31/02/2022
+        formatoFecha.setLenient(false);
 
-        // Definicion del patron de fecha
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate fecha = null;
-        while (fecha == null) {
-            System.out.print("Introduce la fecha de nacimiento (dd/MM/yyyy): ");
-            String fechaIntroducida = sc.nextLine();
-            try {
-                fecha = LocalDate.parse(fechaIntroducida, formato);
-            } catch (DateTimeParseException e) {
-                System.out.println("La fecha introducida no es válida. Por favor, introduce una fecha en el formato adecuado (dd/MM/yyyy).");
+        LocalDate fechaNacimiento = null;
+        String fechaString = null;
+        while (fechaNacimiento == null){
+            System.out.print("Introduce fecha de nacimiento (dd/MM/yyyy):");
+            fechaString = Entrada.cadena();
+            if(fechaString.trim().isEmpty()){
+                System.out.println("No se ha introducido una fecha.");
+            }else{
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    fechaNacimiento = LocalDate.parse(fechaString, formatter);
+                } catch (DateTimeParseException  e) {
+                    System.out.println("Fecha introducida no es válida, vuelve a intentarlo.\n");
+                }
             }
         }
-        return fecha;
+        return fechaNacimiento;
+    }
+
+    public static void mostrarMensaje(Exception e){
+        System.err.println(e.getMessage());
+    }
+
+    public static void mostrarMensaje(String mensaje){
+        System.out.println(mensaje);
     }
 }

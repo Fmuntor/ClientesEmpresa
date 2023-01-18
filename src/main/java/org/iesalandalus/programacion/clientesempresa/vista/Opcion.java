@@ -7,5 +7,6 @@ public enum Opcion {
     INSERTAR_CLIENTE,
     MOSTRAR_CLIENTE,
     MOSTRAR_CLIENTES_FECHA,
-    SALIR
+    SALIR,
+    NO_VALIDO
 }

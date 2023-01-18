@@ -1,24 +1,51 @@
 package org.iesalandalus.programacion.clientesempresa.modelo.dominio;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Cliente {
     private final String ER_CORREO = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
     private final String ER_DNI = "^(\\d{8})([-]?)([A-Za-z])$";
     private final String ER_TELEFONO = "^\\d{9}$";
     public final String FORMATO_FECHA = "^\\d{2}/\\d{2}/\\d{4}$";
+    public final String FORMATO_NOMBRE = "^[a-zA-Z\\s]*$";
     private String nombre;
     private String DNI;
     private String correo;
     private String telefono;
-    private Date fechaNacimiento;
+    private LocalDate fechaNacimiento;
+
+    public Cliente(String nombre, String DNI, String correo, String telefono, LocalDate fechaNacimiento) {
+        setNombre(nombre);
+        setDNI(DNI);
+        setCorreo(correo);
+        setTelefono(telefono);
+        setFechaNacimiento(fechaNacimiento);
+    }
+
+
+    public Cliente(Cliente cliente) {
+        if(cliente == null) {
+            throw new NullPointerException("ERROR: No es posible copiar un cliente nulo.");
+        }
+        setNombre(cliente.getNombre());
+        setDNI(cliente.getDni());
+        setCorreo(cliente.getCorreo());
+        setTelefono(cliente.getTelefono());
+        setFechaNacimiento(cliente.getFechaNacimiento());
+    }
+
+    public Cliente() {
+    }
 
     private String formateaNombre(String nombre) {
+        
         // Eliminar caracteres en blanco al inicio y al final del nombre
-        nombre = nombre.trim();
+        try{
+            nombre = nombre.trim();
+            }catch (IllegalArgumentException e){
+                System.out.println("No.");
+            }
     
         // Separar el nombre en palabras
         String[] palabras = nombre.split("\\s+");
@@ -31,6 +58,7 @@ public class Cliente {
     
         // Unir las palabras formateadas en un solo nombre
         nombre = String.join(" ", palabras);
+        nombre = nombre.trim();
     
         return nombre;
     }
@@ -60,7 +88,7 @@ public class Cliente {
         return nombre;
     }
 
-    public String getDNI() {
+    public String getDni() {
         return DNI;
     }
 
@@ -72,7 +100,7 @@ public class Cliente {
         return telefono;
     }
 
-    public Date getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }
 
@@ -91,17 +119,24 @@ public class Cliente {
     }
 
     public void setNombre(String nombre) {
-        // Comprobacion de que el nombre no sea nulo ni este vacio
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo ni estar vacío");
+        if (nombre == null){
+            throw new NullPointerException("ERROR: El nombre de un cliente no puede ser nulo.");
         }
-        // Realizar el formateo y asignarlo a la variable de la clase
+        if(nombre.trim().isEmpty()){
+            throw new IllegalArgumentException("ERROR: El nombre de un cliente no puede estar vacío.");
+        }
         this.nombre = formateaNombre(nombre);
     }
 
     public void setDNI(String DNI) {
-        if(comprobarLetraDNI(DNI)==false){
-            throw new IllegalArgumentException("El DNI es incorrecto. Por favor, vuelva a introducirlo.");
+        if (DNI == null){
+            throw new NullPointerException("ERROR: El dni de un cliente no puede ser nulo.");
+        }
+        if(DNI.trim().isEmpty() || DNI.length() != 9){
+            throw new IllegalArgumentException("ERROR: El dni del cliente no tiene un formato válido.");
+        }
+        if(!comprobarLetraDNI(DNI)){
+            throw new IllegalArgumentException("ERROR: La letra del dni del cliente no es correcta.");
         }
         this.DNI = DNI;
     }
@@ -116,49 +151,35 @@ public class Cliente {
         // El carácter $ al final de la expresión regular indica que la cadena debe terminar aquí.
 
         // Comprueba si el correo no coincide con la expresión regular,, en ese caso lanza una excepcion
-        if (!correo.matches(ER_CORREO)) {
-           throw new IllegalArgumentException("El formato del correo es incorrecto");
+        if (correo == null){
+            throw new NullPointerException("ERROR: El correo de un cliente no puede ser nulo.");
         }
+        if(correo.trim().isEmpty() || !correo.matches(ER_CORREO)){
+            throw new IllegalArgumentException("ERROR: El correo del cliente no tiene un formato válido.");
+        }
+    
+
 
         this.correo = correo;
    }
 
+
     public void setTelefono(String telefono) {
-        // Comprueba si el teléfono no coincide con la expresión regular, lanzando una nueva excepcion.
-        if (!telefono.matches(ER_TELEFONO)) {
-            throw new IllegalArgumentException("El formato del teléfono es incorrecto");
+        if (telefono == null){
+            throw new NullPointerException("ERROR: El teléfono de un cliente no puede ser nulo.");
+        }
+        if(telefono.trim().isEmpty() || !telefono.matches(ER_TELEFONO)){
+            throw new IllegalArgumentException("ERROR: El teléfono del cliente no tiene un formato válido.");
         }
 
         this.telefono = telefono;
     }
 
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        // Formatea la fecha proporcionada en una cadena de texto
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String fechaFormateada = sdf.format(fechaNacimiento);
-
-        // Comprueba si la fecha formateada coincide con la expresión regular
-        Pattern p = Pattern.compile(FORMATO_FECHA);
-        Matcher m = p.matcher(fechaFormateada);
-
-        if (m.matches()) {
-            // Si el formato es correcto, establece la fecha de nacimiento
-            this.fechaNacimiento = fechaNacimiento;
-        } else {
-            // Si el formato es incorrecto, lanza una excepción
-            throw new IllegalArgumentException("El formato de la fecha de nacimiento es incorrecto. Debe seguir el patrón dd/MM/yyyy");
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        if (fechaNacimiento == null){
+            throw new NullPointerException("ERROR: La fecha de nacimiento de un cliente no puede ser nula.");
         }
-    }
-
-    public Cliente(String nombre, String DNI, String correo, String telefono, Date fechaNacimiento) {
-        this.nombre = nombre;
-        this.DNI = DNI;
-        this.correo = correo;
-        this.telefono = telefono;
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public Cliente() {
     }
 
     @Override
@@ -187,15 +208,11 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Nombre= "+"("+getIniciales()+")" + nombre + ", DNI=" + DNI + ", correo=" + correo + ", telefono=" + telefono
-                + ", fechaNacimiento=" + fechaNacimiento + "]";
+        return "nombre="+ nombre +" ("+getIniciales()+")"+ 
+            ", DNI=" + DNI + 
+            ", correo=" + correo + 
+            ", teléfono=" + telefono +
+            ", fecha nacimiento=" + fechaNacimiento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
     }
-
-    
-    
-
-    
-    
-    
 }
 
